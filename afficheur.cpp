@@ -328,28 +328,29 @@ void myDisplay::configureMode(int mode){
 //*********************************************
 void myDisplay::update(void){
     switch(displayMode){
-        case 0 : // banniere
+        case 0 : // affichage de la banniere
             displayBanniere();
             displayMode=1;
             break;
         case 1 : // n'affiche rien si banniere affichee
             break;
-        case 2 : // affichage du tableau de valeur de la regulation
+        case 2 : // ecran des valeurs de regulation
             displayValeurs();
             break;
         //*********************************************
         // gestion du menu de configuration
         //*********************************************
-        case 3 : // affichage du menu de configuration aucune ligne selectionnée
-        case 31 : // affichage du menu de configuration ligne 1 selectionnnée
-        case 32 : // affichage du menu de configuration ligne 2 selectionnnée
-        case 33 : // affichage du menu de configuration ligne 3 selectionnnée
+        case 3 : // menu de configuration aucune ligne selectionnée
+        case 31 : // menu de configuration ligne 1 selectionnnée
+        case 32 : // menu de configuration ligne 2 selectionnnée
+        case 33 : // menu de configuration ligne 3 selectionnnée
             displayConfig(); 
             break;
         case 34 : // en fin de menu configuration on repasse au debut
             displayMode = 31; // on repasse sur ligne 1 du menu
             break;
         case 311 : // appui long sur ligne 1 du menu de configuration (switch mode)
+            // on switch la regulation du mode CONFORT (jour) au mode ECO (nuit)
             regulation.switchMode();
             displayMode=31;
             break;
@@ -360,7 +361,7 @@ void myDisplay::update(void){
             MenuConfigureModes();
             break;
         case 324 : // fin du menu de configuration des mode ; retour en ligne 1
-            displayMode = 321;
+            displayMode = 320;
             break;
         case 331 : // appui long sur retour dans menu configuration des modes
             displayMode=3;
@@ -368,16 +369,16 @@ void myDisplay::update(void){
         //*********************************************
         // gestion du menu parametrage CONFORT
         //*********************************************
-        case 3210 : // affichage menu configuration mode CONFORT 
-        case 3211 : // affichage menu configuration mode CONFORT ligne 1 selectionnée
-        case 3212 : // affichage menu configuration mode CONFORT ligne 2 selectionnée
-        case 3213 : // affichage menu configuration mode CONFORT ligne 3 selectionnée
+        case 3210 : // menu configuration mode CONFORT 
+        case 3211 : // menu configuration mode CONFORT ligne 1 selectionnée
+        case 3212 : // menu configuration mode CONFORT ligne 2 selectionnée
+        case 3213 : // menu configuration mode CONFORT ligne 3 selectionnée
             configureMode(MODE_CONFORT);
             break;
         case 32101 : // sortie du menu configuration mode CONFORT
             displayMode = 320;
             break;
-        case 32111 : // increment ou decrement de la consigne
+        case 32111 : // increment ou decrement de la consigne CONFORT
             regulation.modifyConsigne(MODE_CONFORT);
             displayMode = 3211;
             break;
@@ -395,10 +396,10 @@ void myDisplay::update(void){
         //*********************************************
         // gestion du menu parametrage ECO
         //*********************************************
-        case 3220 : // affichage menu configuration mode ECO 
-        case 3221 : // affichage menu configuration mode ECO ligne 1 selectionnée
-        case 3222 : // affichage menu configuration mode ECO ligne 2 selectionnée
-        case 3223 : // affichage menu configuration mode ECO ligne 3 selectionnée
+        case 3220 : // menu configuration mode ECO 
+        case 3221 : // menu configuration mode ECO ligne 1 selectionnée
+        case 3222 : // menu configuration mode ECO ligne 2 selectionnée
+        case 3223 : // menu configuration mode ECO ligne 3 selectionnée
             configureMode(MODE_ECO);
             break;
         case 32201 : // sortie du menu configuration mode ECO
@@ -406,14 +407,15 @@ void myDisplay::update(void){
             break;
         case 32211 : // increment ou decrement de la consigne
             regulation.modifyConsigne(MODE_ECO);
-            displayMode = 3211;
+            displayMode = 3221;
             break;
         case 32221 : // switch sens de progression des valeurs + <=> - du mode ECO
             regulation.switchModeSens(MODE_ECO);
             displayMode = 3222;
             break;
-        case 32231 : // sortie du menu configuration du mode ECO
-            displayMode = 320;
+        case 32231 : // switch changement de l'increment du mode ECO
+            regulation.switchModeIncrement(MODE_ECO);
+            displayMode = 3223;
             break;
         case 3224 : // fin du menu configuration du mode ECO, on repasse en ligne 1
             displayMode = 3220;
