@@ -4,6 +4,9 @@
 //  Created by    : Bruno FROGER
 //  creation date : 2018-12-02
 //
+// Pour Arduino Nano
+// processeur ATMega328P (old Bootloader)
+//
 
 #include <arduino.h>
 #include <Adafruit_GFX.h>
