@@ -6,8 +6,7 @@
 #include "regulation.hpp"
 #include "sensor.hpp"
 #include "variables.hpp"
-
-#define REGULATION_LOOP_DELAY   1000
+#include "defaultValue.hpp"
 
 Servo moteur;
 
@@ -26,9 +25,16 @@ Regulation::Regulation(void){
 //*
 //*********************************************
 void Regulation::init(void){
-    Serial.println("Regulation init : debut");
+    //Serial.println("Regulation init : debut");
     loopDelay = REGULATION_LOOP_DELAY;
-    moteur.attach(REGULATION_COMMANDE_CHAUFFAGE_PIN);
+    moteur.attach(PIN_MOTOR);
+    pinMode(PIN_MOTOR, OUTPUT);
+    /*
+    if (moteur.attached()){
+        Serial.println("Moteur attaché");
+    }else{
+        Serial.println("moteur non attaché");
+    }*/
     mode = MODE_CONFORT;
     tblModes[MODE_CONFORT].consigne=2000;
     tblModes[MODE_CONFORT].nom="CONFORT";
@@ -38,7 +44,8 @@ void Regulation::init(void){
     tblModes[MODE_ECO].nom="ECO";
     tblModes[MODE_ECO].sens='+';
     tblModes[MODE_ECO].increment=1;
-    Serial.println("Regulation init : fin");
+    //Serial.println("Regulation init : fin");
+    delay(100);
 }
 
 //*********************************************
@@ -101,7 +108,7 @@ int Regulation::getModeConsigne(int mode){
 //*
 //*********************************************
 int Regulation::getModeConsigne(void){
-    return tblModes[mode].consigne;
+    return getModeConsigne(this->mode);
 }
 
 //*********************************************
@@ -164,8 +171,8 @@ void Regulation::modifyConsigne(int mode){
     }else{
         tblModes[mode].consigne -= tblModes[mode].increment;
     }
-    Serial.print("Nouvelle consigne => ");
-    Serial.println(tblModes[mode].consigne);
+    //Serial.print("Nouvelle consigne => ");
+    //Serial.println(tblModes[mode].consigne);
 }
 
 //*********************************************
@@ -177,12 +184,24 @@ void Regulation::execute(void){
     long tmpTimestamp=millis();
 
     if (tmpTimestamp > (lastExecution + loopDelay)){
+        lastExecution=tmpTimestamp;
+        Serial.println("=======================");
+        Serial.println("Regulation");
         // recuperation de la consigne
         int valConsigne = getModeConsigne();
         // recuperation de la mesure
-        int tempMesuree = tempSensor.getValue();
+        int tempMesuree;
+        // mode simulation ou mode reel
+        boolean simulation = true;
+        tempMesuree  = tempSensor.getValue();
         // calcul de la regulation
         int difference = valConsigne - tempMesuree;
+        Serial.print("val mesuree = ");
+        Serial.print(tempMesuree);
+        Serial.print(" ; val consigne = ");
+        Serial.print(valConsigne);
+        Serial.print(" ; difference = ");
+        Serial.print(difference);
         int delta = abs(difference);
         if (delta > REGULATION_SEUIL){
             // il faut reguler
@@ -192,6 +211,8 @@ void Regulation::execute(void){
             } else if (valeurCommandeChauffage >= 100){
                 valeurCommandeChauffage = 100;
             }
+            Serial.print(" ; regulation = ");
+            Serial.print(valeurCommandeChauffage);
             // modifier la position de la commande de chauffage
             // le moteur varie entre 0 et 180 degres
             int tmp = map(valeurCommandeChauffage,0,100,0,180);
@@ -200,6 +221,8 @@ void Regulation::execute(void){
             //Serial.println(tmp);
             //analogWrite(REGULATION_COMMANDE_CHAUFFAGE_PIN,valeurCommandeChauffage);
         }
+        Serial.println("");
+        Serial.println("=======================");
     }
 }
 

@@ -2,8 +2,11 @@
 //  sensor.cpp
 //
 
+#include <stdio.h>
 #include "sensor.hpp"
 #include "defaultValue.hpp"
+#include "variables.hpp"
+#include "simulation.hpp"
 
 //*********************************************
 //*
@@ -18,14 +21,15 @@ SensorClass::SensorClass(void){
 //*       init
 //*
 //*********************************************
-void SensorClass::init(int sensorPin, int loopDelay, int nbMoyenne){
-    Serial.println("SensorClass init : debut");
+void SensorClass::init(String nom, int sensorPin, int loopDelay, int nbMoyenne){
+    //Serial.println("SensorClass init : debut");
 
     this->inputPin = sensorPin;
     this->loopDelay = loopDelay;
     this->nbValMoyenne = nbMoyenne;
+    this->name = nom;
 
-    Serial.println("SensorClass init : fin");
+    //Serial.println("SensorClass init : fin");
 }
 
 //*********************************************
@@ -37,14 +41,20 @@ int SensorClass::readValue(void){
     return analogRead(this->inputPin);
 }
 
+
 //*********************************************
 //*
 //*       getValue
 //*
 //*********************************************
 int SensorClass::getValue(void){
-    // les limites de mesure du capteur sont definies dans defaultValue.hpp
-    return map(this->value,0,1023,TEMPERATURE_MIN_CATEUR*100,TEMPERATURE_MAX_CATEUR*100);
+    #ifdef __SIMULATION
+        // return the simulated value
+        return getSimulatedValue();
+    #else
+        // les limites de mesure du capteur sont definies dans defaultValue.hpp
+        return map(this->value,0,1023,TEMPERATURE_MIN_CATEUR*100,TEMPERATURE_MAX_CATEUR*100);
+    #endif
 }
 
 //*********************************************
@@ -56,9 +66,13 @@ int SensorClass::execute(void){
     long tmpTimestamp=millis();
 
     if (tmpTimestamp > (lastExecution + loopDelay)){
-        value = calculeMoyenne(readValue());
+        lastExecution=tmpTimestamp;
+        //Serial.println("###################");
+        //Serial.println("mesure temperature");
+        this->value = calculeMoyenne(readValue());
         //Serial.print("Temperature ambiante : ");
         //Serial.println(value);
+        //Serial.println("###################");
     }
 }
 

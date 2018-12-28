@@ -29,14 +29,14 @@ myDisplay::~myDisplay()
 //*
 //*********************************************
 void myDisplay::init(void){
-    Serial.println("afficheur init : debut");
+    //Serial.println("afficheur init : debut");
     // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x32)
 
     display.setTextColor(WHITE);
     buttonIsPressed = 0;
     displayMode=0;
-    Serial.println("afficheur init : fin");
+    //Serial.println("afficheur init : fin");
 }
 
 //*********************************************
@@ -130,8 +130,9 @@ void myDisplay::displayValeurs(void){
     display.println(affTemperature(mesure));
 
     display.setCursor(64,16);
-    display.print("diff ");
-    display.println(affTemperature(difference));
+    display.print(" (");
+    display.print(affTemperature(difference));
+    display.println(")");
 
     display.setCursor(0,24);
     display.print("chauffage  ");

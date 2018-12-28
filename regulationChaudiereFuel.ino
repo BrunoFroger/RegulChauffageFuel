@@ -41,7 +41,7 @@ void setup() {
   }
   Serial.println("Serial initialized");
 
-  tempSensor.init(TEMPERATURE_PIN, TEMPERATURE_LOOP_DELAY,TEMPERATURE_NB_MOYENNE);
+  tempSensor.init("tempInerieure",TEMPERATURE_PIN, TEMPERATURE_LOOP_DELAY,TEMPERATURE_NB_MOYENNE);
   //consigne.init(CONSIGNE_PIN, CONSIGNE_LOOP_DELAY, CONSIGNE_NB_MOYENNE);
   regulation.init();
   display.init();
