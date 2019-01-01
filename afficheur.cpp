@@ -35,7 +35,7 @@ void myDisplay::init(void){
 
     display.setTextColor(WHITE);
     buttonIsPressed = 0;
-    displayMode=0;
+    displayMode=2;
     //Serial.println("afficheur init : fin");
 }
 

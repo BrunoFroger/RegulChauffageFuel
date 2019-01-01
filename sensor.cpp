@@ -53,7 +53,7 @@ int SensorClass::getValue(void){
         return getSimulatedValue();
     #else
         // les limites de mesure du capteur sont definies dans defaultValue.hpp
-        return map(this->value,0,1023,TEMPERATURE_MIN_CATEUR*100,TEMPERATURE_MAX_CATEUR*100);
+        return map(this->value,0,1023,TEMPERATURE_MIN_CATEUR,TEMPERATURE_MAX_CATEUR);
     #endif
 }
 
